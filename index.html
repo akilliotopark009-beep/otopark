@@ -1,1 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Akıllı Otopark</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #0a0a0f; color: white; font-family: sans-serif; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 2rem 1rem; }
+        .baslik { font-size: 1rem; color: #888; letter-spacing: 4px; text-transform: uppercase; margin-bottom: 0.5rem; }
+        h1 { font-size: 2rem; font-weight: 500; margin-bottom: 1rem; }
+        .kart { background: #13131a; border: 0.5px solid #333; border-radius: 16px; padding: 2rem; width: 100%; max-width: 500px; margin-bottom: 1.5rem; text-align: center; }
+        .buyuk-sayi { font-size: 8rem; font-weight: 700; line-height: 1; transition: color 0.8s; }
+        .etiket { color: #666; font-size: 0.9rem; margin-top: 0.5rem; }
+        .bar-wrapper { background: #1e1e2e; border-radius: 99px; height: 20px; overflow: hidden; margin: 1.5rem 0 0.8rem; }
+        .bar { height: 100%; border-radius: 99px; transition: width 0.8s ease, background 0.8s ease; }
+        .durum { font-size: 1.1rem; font-weight: 500; transition: color 0.8s; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; width: 100%; max-width: 500px; }
+        .mini-kart { background: #13131a; border: 0.5px solid #333; border-radius: 12px; padding: 1.2rem; text-align: center; }
+        .mini-sayi { font-size: 2.5rem; font-weight: 700; }
+        .mini-etiket { font-size: 0.8rem; color: #666; margin-top: 0.3rem; }
+        .canli { display: inline-flex; align-items: center; gap: 6px; background: #1a2a1a; border: 0.5px solid #2a4a2a; border-radius: 99px; padding: 4px 14px; font-size: 0.75rem; color: #4caf50; margin-bottom: 1.5rem; }
+        .nokta { width: 7px; height: 7px; background: #4caf50; border-radius: 50%; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+    </style>
+</head>
+<body>
+    <p class="baslik">Akıllı Otopark</p>
+    <h1>Otopark Durumu</h1>
+    <div class="canli"><span class="nokta"></span> Canlı Takip</div>
 
+    <div class="kart">
+        <div class="buyuk-sayi" id="arac">...</div>
+        <div class="etiket">araç içeride</div>
+        <div class="bar-wrapper">
+            <div class="bar" id="bar" style="width:0%"></div>
+        </div>
+        <div class="durum" id="durum">Bağlanıyor...</div>
+    </div>
+
+    <div class="grid">
+        <div class="mini-kart">
+            <div class="mini-sayi" style="color:#4caf50" id="bos">-</div>
+            <div class="mini-etiket">boş yer</div>
+        </div>
+        <div class="mini-kart">
+            <div class="mini-sayi" style="color:#ff5252" id="dolu">-</div>
+            <div class="mini-etiket">dolu yer</div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-database.js";
+
+        const app = initializeApp({ databaseURL: "https://otopark-28cc4-default-rtdb.firebaseio.com" });
+        const db = getDatabase(app);
+        const kapasite = 4;
+
+        onValue(ref(db, 'arac'), (snapshot) => {
+            const sayi = snapshot.val() ?? 0;
+            const bos = kapasite - sayi;
+            const yuzde = (sayi / kapasite) * 100;
+
+            document.getElementById('arac').innerText = sayi;
+            document.getElementById('bos').innerText = bos;
+            document.getElementById('dolu').innerText = sayi;
+            document.getElementById('durum').innerText = sayi + " / " + kapasite + " dolu";
+
+            const renk = yuzde >= 100 ? '#ff5252' : yuzde >= 75 ? '#ff9800' : '#00e5ff';
+            document.getElementById('bar').style.width = yuzde + '%';
+            document.getElementById('bar').style.background = renk;
+            document.getElementById('arac').style.color = renk;
+            document.getElementById('durum').style.color = renk;
+        });
+    </script>
+</body>
+</html>
