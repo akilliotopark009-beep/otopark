@@ -1,0 +1,20 @@
+{
+  "name": "Akıllı Otopark",
+  "short_name": "Otopark",
+  "start_url": "/otopark/",
+  "display": "standalone",
+  "background_color": "#0a0a0f",
+  "theme_color": "#0a0a0f",
+  "icons": [
+    {
+      "src": "https://via.placeholder.com/192x192/00e5ff/0a0a0f?text=P",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://via.placeholder.com/512x512/00e5ff/0a0a0f?text=P",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
